@@ -127,6 +127,6 @@ changes to deployment:
 - adding security context
 - specifying a FS group for volume permissions
 - setting run as user and run as group
-- disable privelege escalation
+- disable privilege escalation
 
-it will no longer be able to perform package updates
+it will no longer be able to perform package updates, escalate to root, and will be limited to preinstalled functionality.
