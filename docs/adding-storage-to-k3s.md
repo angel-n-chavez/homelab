@@ -45,7 +45,7 @@ if you describe the linkding pod you will see only 1 mount, the default one. and
 
 so first things first - create a PVC named `linkding-data-pvc` in a file called storage.yaml:
 
-```
+```yaml
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
@@ -60,7 +60,7 @@ spec:
 
 then, add a volume/volumeMount to the linkding container in `deployment.yaml`; referencing my newly created PVC.
 
-```
+```yaml
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -91,7 +91,7 @@ spec:
 ```
 
 port-forward again:
-```yaml
+```bash
 k port-forward linkding 8080:9090
 ```
 
@@ -130,3 +130,49 @@ changes to deployment:
 - disable privilege escalation
 
 it will no longer be able to perform package updates, escalate to root, and will be limited to preinstalled functionality.
+
+- we determine the appropriate user by looking at the `/etc/passwd` file INSIDE the container. shell into the pod using `k9s`
+- www-data-user (ID 33) is the ID of the intended user for the application
+
+add securityContext to `deployment.yaml`:
+
+```yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: linkding
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: linkding
+  template:
+    metadata:
+      labels:
+        app: linkding
+    spec:
+      **securityContext**:
+        fsGroup: 33 # www-data group ID
+        runAsUser: 33 # www=data user ID
+        runAsGroup: 33
+
+      containers:
+        - name: linkding
+          image: sissbruecker/linkding:1.31.0
+          ports:
+            - containerPort: 9090
+            
+          **securityContext**:
+            allowPrivilegeEscalation: false
+
+          volumeMounts:
+            - name: linkding-data
+              mountPath: /etc/linkding/data
+      volumes:
+        - name: linkding-data
+          persistentVolumeClaim:
+            claimName: linkding-data-pvc
+
+```
+
+now this pod/container is running as www-data user which has no user login or access to a shell and privilege escalation is turned off. this is crucial before exposing to the internet which i will doing with "Cloudflare Tunnels" in future docs/guides.
