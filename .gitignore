@@ -1,8 +1,9 @@
 # --- Obsidian ---
-.obsidian/workspace
-.obsidian/workspace.json
-.obsidian/graph.json
-.obsidian/appearance.json
+.obsidian/
+*.obsidian/workspace
+*.obsidian/workspace.json
+*.obsidian/graph.json
+*.obsidian/appearance.json
 # Allow plugins to sync, but ignore their local data caches
 .obsidian/plugins/*/.git
 .obsidian/plugins/*/.DS_Store
