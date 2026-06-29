@@ -1,4 +1,5 @@
 # --- Obsidian ---
+.obsidian/.trash
 .obsidian/
 *.obsidian/workspace
 *.obsidian/workspace.json
