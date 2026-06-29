@@ -151,7 +151,7 @@ spec:
       labels:
         app: linkding
     spec:
-      **securityContext**:
+      securityContext:
         fsGroup: 33 # www-data group ID
         runAsUser: 33 # www=data user ID
         runAsGroup: 33
@@ -162,7 +162,7 @@ spec:
           ports:
             - containerPort: 9090
             
-          **securityContext**:
+          securityContext:
             allowPrivilegeEscalation: false
 
           volumeMounts:
