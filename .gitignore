@@ -25,5 +25,4 @@ Thumbs.db
 *.env
 *.secret
 *.pem
-*.key
-
+*.*key
