@@ -274,3 +274,58 @@ decryption:
 **ADD  AGEKEY TO GITIGNORE**
 
 git commit and push.
+
+---
+
+# clean up
+
+#### replacing old manually created secret w/encrypted secret through Flux
+
+workflow: 
+- create secret -> encrpyt w/AGE then commit -> Flux handles decryption because the private key lives on the cluster.
+
+```bash
+
+kubectl create secret generic tunnel-credentials \
+--from-file=credentials.json=<file-name>.json --dry-run=client -o yaml > cloudflare-secret.yaml
+
+sops --age=$AGE_PUBLIC \
+--encrypt --encrypted-regex '^(data|stringData)$' --in-place cloudflare-secret.yaml
+
+```
+
+#### Improve linkding setup
+
+fix the clunky python command we ran in [[k3s-storage]] to create a user:
+
+```bash
+k exec -it linkding-pod-name -- python manage.py createsuperuser --username=user --email=user@email.com
+```
+
+with: 
+
+```bash
+kubectl create secret generic linkding-container-env \
+--from-literal=LD_SUPERUSER_NAME=<user> \
+--from-literal=LD_SUPERUSER_PASSWORD=<pass> \
+--dry-run=client \
+-o yaml > linkding-container-env-secret.yaml
+```
+
+next we need to get these environment variables available in the container, so that linkding to can see these secrets. we accomplish this by adding `envFrom:` to the linkeding deployment file. on the same level as the container add the following:
+
+```yaml
+envFrom:
+  - configMapRef:
+      name: linkding-configmap
+  - secretRef:
+      name: linkding-container-env
+```
+
+ commit and push. 
+
+I can now redeploy my cluster on any hardware w/secrets completely automated and managed with FluxCD.
+
+#### Links
+
+[Twelve-Factor App](https://12factor.net/)
