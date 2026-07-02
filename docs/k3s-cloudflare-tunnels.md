@@ -1,12 +1,11 @@
 
 # overview
 
-I use cloudflare tunnels w/SOPs and AGE for secrets mgmt, to expose some of my apps to the internet. Linkding being one of those apps. First i will cover creating cloudflare tunnels in the next section, then I will cover installing sops/age and configuring.
-
 # pre reqs
 
 - cloudflare account w/cloudflare domain purchased, or
 - existing domain transferred to cloudflare (it can take some time)
+- SOPS & AGE installed
 
 ---
 
@@ -187,3 +186,91 @@ this file has 2 manifests `Deployment` and `ConfigMap`.
 
 - `Deployment` - mounts the necessary files for the secrets and the config, with 2 replicas
 - `ConfigMap` - used to define the cloudflared config.yaml like tunnel, credentials-file, metrics, ingress, etc.
+
+---
+
+# managing secrets with SOPS and AGE
+
+one of the challenges with a public gitops repo is making sure you dont accidently push secrets, as well as in the fashion of gitops, injecting secrets into code that is version controlled. This also helps when we have multiple apps w/databases we do not want to be generating secrets manually w/kubectl all the time. so we automate this w/gitops.
+
+we solve this w/SOPs and AGE
+
+#### generate age key
+
+generate a agekey:
+
+```bash
+age-keygen -o age.agekey
+```
+
+this will generate a private and public key, similar to ssh. so take care of that private key.
+
+#### encrypt secret w/sops
+
+using kubectl to create a secret w/dry-run and output to a yaml file:
+
+```bash
+kubectl create secret generic test-secret \
+--from-literal=user=<user> \
+--from-literal=password=<pass> \
+--dry-run=client \
+-o yaml > test-secret.yaml
+```
+
+this creates a secret in base64-encoding, we need to encrypt this.
+
+export the public age key an env var:
+
+```bash
+export AGE_PUBLIC=age1zd5n9zx0dsdwdggjuvz32ppngn45gk0tcnwlwfs53ev7szefmdfqarudsl
+
+echo $AGE_PUBLIC
+```
+
+next use that public key variable to encrypt our secrets:
+
+```bash
+sops --age=$AGE_PUBLIC \
+--encrypt --encrypted-regex '^(data|stringData)$' --in-place test-secret.yaml
+```
+
+this uses SOPS w/the `--age` flag which we give our AGE_PUBLIC env var, we then say `--encrypt` with `--encrypted-regex` the regex will select `data: password: user:` inside test-secret.yaml and encrypt just that.
+
+you will notice a change inside of `test-secret.yaml`, this file can now be safely pushed to github and unless you have the private age key, it is useless.
+
+now we have our secret file, how do we automate this so that flux is taking this secret and decrypting it w/the right values.? I will cover this in the next sub-section
+
+#### bash magic
+
+```bash
+cat age.agekey |
+kubectl create secret generic sops-age \
+--namespace=flux-system \
+--from-file=age.agekey=/dev/stdin
+```
+
+this command cats the age key we created and pipes the output to the `kubectl create secret generic` command. the command creates a secret names `sops-age` in namespace "flux-system" from the agekey file
+
+now that flux has a way to access that private key, we must tell flux where to look for the key.
+
+in `clusters/staging` create `.sops.yaml` with the following:
+
+```yaml
+creation_rules:
+  - path_regex: \.yaml$
+    encrypted_regex: ^(data|stringData)$
+    age: age1zd5n9zx0dsdwdggjuvz32ppngn45gk0tcnwlwfs53ev7szefmdfqarudsl
+```
+
+then in `clusters/staging/apps.yaml` add the following at the same level as `prune: true`:
+
+```yaml
+decryption:
+    provider: sops
+    secretRef:
+      name: sops-age
+```
+
+**ADD  AGEKEY TO GITIGNORE**
+
+git commit and push.
