@@ -17,7 +17,7 @@ create these in `./monitoring/controllers/base/kube-prometheus-stack/` directory
 see [flux docs](https://fluxcd.io/flux/guides/repository-structure/)
 #### namespace.yaml
 
-```
+```yaml
 apiVersion: v1
 kind: Namespace
 metadata:
@@ -26,7 +26,7 @@ metadata:
 
 #### repository.yaml
 
-```
+```yaml
 apiVersion: source.toolkit.fluxcd.io/v1
 kind: HelmRepository
 metadata:
@@ -39,7 +39,7 @@ spec:
 
 #### release.yaml
 
-```
+```yaml
 apiVersion: helm.toolkit.fluxcd.io/v2
 kind: HelmRelease
 metadata:
@@ -77,7 +77,7 @@ spec:
 
 #### kustomization.yaml
 
-```
+```yaml
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 resources:
@@ -90,7 +90,7 @@ resources:
 
 in `./clusters/staging/` create `monitoring.yaml` and add the following:
 
-```
+```yaml
 apiVersion: kustomize.toolkit.fluxcd.io/v1
 kind: Kustomization
 metadata:
@@ -109,7 +109,7 @@ spec:
 
 in `./monitoring/controllers/staging/kube-prometheus-stack/` add:
 
-```
+```yaml
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 namespace: monitoring
@@ -119,7 +119,7 @@ resources:
 
 then add the following to `monitoring/controllers/staging/kustomization.yaml`:
 
-```
+```yaml
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 resources:
