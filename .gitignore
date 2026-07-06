@@ -26,3 +26,4 @@ Thumbs.db
 *.secret
 *.pem
 *.*key
+*.*crt

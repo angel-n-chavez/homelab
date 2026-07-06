@@ -40,10 +40,10 @@ spec:
 
         ## TLS configuration for grafana Ingress
         ## Secret must be manually created in the namespace
-        tls: []
-      #   - secretName: grafana-general-tls
-      #     hosts:
-      #     - gfs.angelchavez.net
+        tls:
+          - secretName: grafana-general-tls
+            hosts:
+            - gfs.angelchavez.net
 
       # # To make Grafana persistent (Using Statefulset)
       # #
