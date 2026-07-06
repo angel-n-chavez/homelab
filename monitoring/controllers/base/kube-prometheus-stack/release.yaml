@@ -27,7 +27,10 @@ spec:
           kind: PrometheusRule
   values:
     grafana:
-      adminPassword: super-secure-pass
+      admin:
+        existingSecret: "grafana-admin-creds"
+        userKey: admin-user
+        passwordKey: admin-password
       ingress:
         enabled: true
 
