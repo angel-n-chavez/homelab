@@ -28,3 +28,32 @@ spec:
   values:
     grafana:
       adminPassword: super-secure-pass
+      ingress:
+        enabled: true
+
+        ingressClassName: traefik
+
+        ## Hostnames.
+        ## Must be provided if Ingress is enable.
+        hosts:
+          - gfs.angelchavez.net
+
+        ## TLS configuration for grafana Ingress
+        ## Secret must be manually created in the namespace
+        tls: []
+      #   - secretName: grafana-general-tls
+      #     hosts:
+      #     - gfs.angelchavez.net
+
+      # # To make Grafana persistent (Using Statefulset)
+      # #
+      # persistence:
+      #   enabled: true
+      #   type: sts
+      #   storageClassName: "storageClassName"
+      #   accessModes:
+      #     - ReadWriteOnce
+      #   size: 20Gi
+      #   finalizers:
+      #     - kubernetes.io/pvc-protection
+
