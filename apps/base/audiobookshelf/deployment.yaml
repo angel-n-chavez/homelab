@@ -1,0 +1,45 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: audiobookshelf
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: audiobookshelf
+  template:
+    metadata:
+      labels:
+        app: audiobookshelf
+    spec:
+#      securityContext:
+#        fsGroup: 33 # www-data group ID
+#        runAsUser: 33 # www=data user ID
+#        runAsGroup: 33
+      containers:
+        - name: audiobookshelf
+          image: ghcr.io/advplyr/audiobookshelf:v2.35.1
+          ports:
+            - containerPort: 3005
+          envFrom:
+            - configMapRef:
+                name: audiobookshelf-configmap
+#            - secretRef:
+#                name: linkding-container-env
+#          securityContext:
+#            allowPrivilegeEscalation: false
+#          volumeMounts:
+#            - name: audiobookshelf-data
+#              mountPath: /config # Where the database and settings must go
+#              subPath: config
+#            - name: audiobookshelf-data
+#              mountPath: /metadata # Where covers and metadata must go
+#              subPath: metadata
+#            - name: audiobookshelf-data
+#              mountPath: /audiobooks # A folder inside my PVC to store the audio files
+#              subPath: audiobooks
+#      volumes:
+#        - name: audiobookshelf-data
+#          persistentVolumeClaim:
+#            claimName: audiobookshelf-data-pvc
+#
