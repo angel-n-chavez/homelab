@@ -12,22 +12,24 @@ spec:
       labels:
         app: audiobookshelf
     spec:
-#      securityContext:
-#        fsGroup: 33 # www-data group ID
-#        runAsUser: 33 # www=data user ID
-#        runAsGroup: 33
+      securityContext:
+        fsGroup: 1000 # node group ID
+        runAsUser: 1000 # node user ID
+        runAsGroup: 1000
+
       containers:
         - name: audiobookshelf
           image: ghcr.io/advplyr/audiobookshelf:2.35.1
           ports:
             - containerPort: 3005
+
           envFrom:
             - configMapRef:
                 name: audiobookshelf-configmap
-#            - secretRef:
-#                name: linkding-container-env
-#          securityContext:
-#            allowPrivilegeEscalation: false
+ 
+          securityContext:
+            allowPrivilegeEscalation: false
+
           volumeMounts:
             - name: audiobookshelf-data
               mountPath: /config # Where the database and settings must go
