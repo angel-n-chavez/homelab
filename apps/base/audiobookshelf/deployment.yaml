@@ -31,17 +31,22 @@ spec:
             allowPrivilegeEscalation: false
 
           volumeMounts:
-            - name: audiobookshelf-data
-              mountPath: /config # Where the database and settings must go
-              subPath: config
-            - name: audiobookshelf-data
-              mountPath: /metadata # Where covers and metadata must go
-              subPath: metadata
-            - name: audiobookshelf-data
-              mountPath: /audiobooks # A folder inside my PVC to store the audio files
-              subPath: audiobooks
-      volumes:
-        - name: audiobookshelf-data
-          persistentVolumeClaim:
-            claimName: audiobookshelf-data-pvc
+            - mountPath: /config
+              name: audiobookshelf-config
+            - mountPath: /metadata
+              name: audiobookshelf-metadata
+            - mountPath: /audiobooks
+              name: audiobookshelf-audiobooks
 
+      restartPolicy: Always
+
+      volumes:
+        - name: audiobookshelf-config
+          persistentVolumeClaim:
+            claimName: audiobookshelf-config
+        - name: audiobookshelf-metadata
+          persistentVolumeClaim:
+            claimName: audiobookshelf-metadata
+        - name: audiobookshelf-audiobooks
+          persistentVolumeClaim:
+            claimName: audiobookshelf-audiobooks
