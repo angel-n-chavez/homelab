@@ -14,8 +14,8 @@
 #### install cloudflared 
 
 see [Cloudflare Docs](https://developers.cloudflare.com/cloudflare-one/networks/connectors/cloudflare-tunnel/do-more-with-tunnels/local-management/create-local-tunnel/#1-download-and-install-cloudflared) for info on how to install cloudflared for your system. 
-for me on debian 13:
 
+for me on debian 13:
 1. Add Cloudflare's package signing key:
 
 ```bash
@@ -222,7 +222,7 @@ this creates a secret in base64-encoding, we need to encrypt this.
 export the public age key an env var:
 
 ```bash
-export AGE_PUBLIC=age1zd5n9zx0dsdwdggjuvz32ppngn45gk0tcnwlwfs53ev7szefmdfqarudsl
+export AGE_PUBLIC=<public-key>
 
 echo $AGE_PUBLIC
 ```
@@ -259,7 +259,7 @@ in `clusters/staging` create `.sops.yaml` with the following:
 creation_rules:
   - path_regex: \.yaml$
     encrypted_regex: ^(data|stringData)$
-    age: age1zd5n9zx0dsdwdggjuvz32ppngn45gk0tcnwlwfs53ev7szefmdfqarudsl
+    age: <public-key>
 ```
 
 then in `clusters/staging/apps.yaml` add the following at the same level as `prune: true`:

@@ -107,10 +107,10 @@ bootstrap command
 ```bash
 flux bootstrap github \
   --owner=$GITHUB_USER \
-  --repository=fleet-infra \
+  --repository=$GITHUB_REPO \
   --branch=main \
-  --path=./clusters/my-cluster \
-  --personal
+  --path=./clusters/staging \
+# --personal  # optional 
 ```
 
 ensure that you edit the values to match your needs

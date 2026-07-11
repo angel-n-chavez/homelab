@@ -73,6 +73,10 @@ spec:
   values:
     grafana:
       adminPassword: <pass>
+#      admin:  # optional if you have existing secrets.
+#        existingSecret: "grafana-admin-creds"
+#        userKey: admin-user
+#        passwordKey: admin-password
 ```
 
 #### kustomization.yaml
