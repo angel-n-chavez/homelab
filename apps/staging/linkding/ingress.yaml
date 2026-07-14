@@ -4,6 +4,10 @@ metadata:
   name: linkding
 spec:
   ingressClassName: traefik
+  tls:
+  - hosts:
+    - ld.angelchavez.net
+    secretName: linkding-tls-secret
   rules:
     - host: ld.angelchavez.net
       http:
