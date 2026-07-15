@@ -49,13 +49,12 @@ spec:
             - gfs.angelchavez.net
 
         # To make Grafana persistent (Using Statefulset)
-        #
-        persistence:
-          enabled: true
-          type: sts
-          accessModes:
-            - ReadWriteOnce
-          size: 5Gi
-          finalizers:
-            - kubernetes.io/pvc-protection
+      persistence:
+        enabled: true
+        type: sts
+        accessModes:
+          - ReadWriteOnce
+        size: 5Gi
+        finalizers:
+          - kubernetes.io/pvc-protection
 
