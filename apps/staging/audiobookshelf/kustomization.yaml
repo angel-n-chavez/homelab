@@ -6,3 +6,4 @@ resources:
   - cloudflare.yaml
   - cloudflare-secret.yaml
   - ingress.yaml
+  - audiobookshelf-tls-secret.yaml

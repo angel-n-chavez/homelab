@@ -4,6 +4,10 @@ metadata:
   name: audiobookshelf
 spec:
   ingressClassName: traefik
+  tls:
+  - host:
+    - ab.angelchavez.net
+    secretName: audiobookshelf-tls-secret
   rules:
     - host: ab.angelchavez.net
       http:
