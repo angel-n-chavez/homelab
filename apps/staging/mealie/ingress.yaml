@@ -1,0 +1,21 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: mealie
+spec:
+  ingressClassName: traefik
+  #tls:
+  #- hosts:
+  #  - ml.angelchavez.net
+  #  secretName: mealie-tls-secret
+  rules:
+    - host: ml.angelchavez.net
+      http:
+        paths:
+          - backend:
+              service:
+                name: mealie
+                port:
+                  number: 9000
+            path: /
+            pathType: Prefix
