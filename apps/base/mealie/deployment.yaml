@@ -20,6 +20,11 @@ spec:
           name: mealie
           ports:
             - containerPort: 9000
+          env:
+            - name: BASE_URL
+              value: "http://ml.angelchavez.net" # Set to https:// if you have TLS termination handled upstream
+            - name: ALLOW_META_TAGS
+              value: "true"
           volumeMounts:
             - mountPath: "/app/data"
               name: mealie-data
